@@ -1,13 +1,8 @@
 import React from 'react';
 import './App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
-import { List, Tabs } from 'react-bulma-components';
-
-interface Item {
-    id: number,
-    page: number,
-    position: number,
-}
+import Item from '../Domain/Item';
+import ItemsEditor from './Components/ItemsEditor';
 
 interface AppState {
     activePage: number,
@@ -52,26 +47,11 @@ class App extends React.Component<{}, AppState> {
         const pages = this.pagesFromItems(items);
 
         return (
-            <div className="App">
-                <Tabs align="centered">
-                    {pages.map(page => {
-                        const isActive = page === activePage;
-                        return (
-                            <Tabs.Tab
-                                active={isActive}
-                                onClick={() => this.setActivePage(page)}
-                            >Page {page}</Tabs.Tab>
-                        );
-                    })}
-                </Tabs>
-                <List hoverable>
-                    {items
-                        .filter(item => item.page === activePage)
-                        .map(item => (
-                            <List.Item>Item {item.id}</List.Item>
-                        ))}
-                </List>
-            </div>
+            <ItemsEditor
+                activePage={activePage}
+                items={items}
+                pages={pages}
+                onPageTabClick={this.setActivePage.bind(this)} />
         );
     }
 }
