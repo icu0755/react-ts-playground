@@ -9,6 +9,13 @@ interface AppState {
     items: Item[],
 }
 
+
+function compareItems(a: Item, b: Item): number {
+    return (a.page - b.page === 0)
+        ? a.position - b.position
+        : a.page - b.page;
+}
+
 class App extends React.Component<{}, AppState> {
     constructor(props: any) {
         super(props);
@@ -38,8 +45,21 @@ class App extends React.Component<{}, AppState> {
         return Array.from(pages);
     };
 
-    setActivePage(activePage: number) {
-        this.setState({ activePage });
+    onPageTabDrop(page: number, item: Item) {
+        this.moveItemToPage(page, item);
+        this.setActivePage(page);
+    }
+
+    moveItemToPage(page: number, item: Item) {
+        const items = this.state.items
+            .map(x => x.id === item.id ? { ...item, page, position: -1 } : x)
+            .sort(compareItems)
+            .map((x, i) => x.page === page ? { ...x, position: i } : x);
+        this.setState({ items });
+    }
+
+    setActivePage(page: number) {
+        this.setState({ activePage: page });
     }
 
     render() {
@@ -51,7 +71,8 @@ class App extends React.Component<{}, AppState> {
                 activePage={activePage}
                 items={items}
                 pages={pages}
-                onPageTabClick={this.setActivePage.bind(this)} />
+                onPageTabDrop={this.onPageTabDrop.bind(this)}
+                onPageTabClick={this.setActivePage.bind(this)}/>
         );
     }
 }
