@@ -1,9 +1,15 @@
-import Item from '../Domain/Item';
+type Item = {
+    id: number,
+    page: number,
+    position: number,
+    added?: boolean,
+    deleted?: boolean,
+};
 
 export default class Manager {
     private items: Item[];
 
-    constructor({ items }) {
+    constructor({ items }: {items: Item[]}) {
         this.items = items || [];
     }
 
